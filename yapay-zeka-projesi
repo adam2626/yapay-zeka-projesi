@@ -1,1 +1,61 @@
-.
+
+import pyttsx3
+import speech_recognition as sr
+import wikipedia
+
+
+class yapay_zeka:
+    
+
+    def __init__(self):
+        self.engine = pyttsx3.init()
+        self.recognizer = sr.Recognizer()
+
+    def speak(self,say):
+        self.engine = pyttsx3.init()
+        self.engine.say(say)
+        self.engine.runAndWait()
+
+    def listen(self):
+        with sr.Microphone() as source:
+            print("Ne söylemek istersin?")
+            self.recognizer.pause_threshold = 1
+            audio = self.recognizer.listen(source)
+        try:
+            text = self.recognizer.recognize_google(audio, language='tr-TR')
+            print("Senin söylediğin: " + text)
+        except Exception as e:
+            print("Anlayamadım.")
+            return "None"
+        return text
+
+    def search_wiki(self, query):
+        try:
+            self.speak("Wikipedia'da araştırma yapıyorum...")
+            result = wikipedia.summary(query, sentences=2)
+            self.speak("Bulduklarım şunlar:")
+            self.speak(result)
+        except Exception as e:
+            self.speak("Üzgünüm, aradığınızı bulamadım.")
+    
+    def respond(self, text):
+        if "merhaba" in text.lower():
+            self.speak("Merhaba, nasıl yardımcı olabilirim?")
+        elif "nasılsın" in text.lower():
+            self.speak("Ben bir makineyim, benim için önemli olan sizin nasıl olduğunuz. Siz nasılsınız?")
+        elif "arama yap" in text.lower():
+            self.speak("Ne arayalım")
+            search_query = self.listen()
+            self.search_wiki(search_query)
+        elif "güle güle" in text.lower():
+            self.speak("Güle güle, tekrar görüşmek üzere!")
+            exit()
+        else:
+            self.speak("Üzgünüm, anlamadım. Tekrar söyler misin?")
+
+        
+if __name__ == "__main__":
+    bot = yapay_zeka()
+    while True:
+        text = bot.listen()
+        bot.respond(text)
